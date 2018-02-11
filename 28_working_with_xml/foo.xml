@@ -1,0 +1,232 @@
+<!--  WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING  -->
+<!--                                                                   -->
+<!--  USE com.nasdaq.options2.tools.messagegen.binary.MessageGenerator -->
+<!--                                                                   -->
+<!--  WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING  -->
+<parser package="com.nasdaq.coco.edgemessaging" type="Edge" mode="bin">
+
+	<genparse ptype="PREFIX" value="Seq" />
+    <genparse ptype="PREFIX" value="Unseq" />
+
+    <gencopy ptype="PREFIX" src="Unseq" dest="Seq" timestampField="timestamp" />
+    <gencopy ptype="PREFIX" src="Seq" dest="Unseq" />
+
+    <gencompare ptype="PREFIX" value="Unseq" />
+    <gencompare ptype="PREFIX" value="Seq" />
+
+    <!-- BEGIN COCO MSG INFO -->
+    
+    <constants class="MsgInfo">
+    
+        <enum class="MsgTypes" type="byte" friendlyName="Message Types">
+            <enumitem name="TRADE_REPORT_STATUS"                value="U"/>
+            <enumitem name="EDGE_CLEARING_TRADE"                value="X"/>
+            <enumitem name="BLOB"                               value="B"/>
+            <enumitem name="PORT_RESPONSE"                      value="V"/>
+            <enumitem name="END_OF_TRADING" 					value="T" />
+            <enumitem name="END_OF_DDS"							value="D" />
+            
+        </enum>
+        
+        <enum class="GmpMsgTypes" type="byte" friendlyName="GMP Message Types">
+            <enumitem name="BONA_CLEARING_TRADE"                value="C"/>
+		    <enumitem name="BONA_REPORT_TRADE"                  value="R"/>
+		    <enumitem name="END_OF_DAY"                         value="Y"/>
+		    <enumitem name="END_OF_MESSAGES"                    value="Z"/>
+        </enum>
+
+        <enum class="Lengths" type="int">
+            <enumitem name="CLEARING_ACCOUNT"                   value="5" />
+            <enumitem name="DATE"                               value="10"/>
+            <enumitem name="MAX_REASON_LEN"                  	value="40"/>
+			<enumitem name="UNDERLYING_NAME"					value="5" />
+    		<enumitem name="SUPP_ID"							value="13"/>
+            
+            <!-- Following are for Options -->
+            <enumitem name="CLEARING"                           value="6"/>
+            <enumitem name="FLOOR_BROKER"                       value="6"/>
+            <enumitem name="MULTI_ACCOUNT"                      value="5"/>
+            <enumitem name="BLOB_LEN"				            value="1097"/>
+            
+            <!-- Following are for Helpdesks -->
+            <enumitem name="USER_NAME"				            value="10"/>
+            <enumitem name="BILLING_INDICATOR"				    value="3"/>
+        </enum>
+        
+        <enum class="ResponseCodes" type="int">
+        	<enumitem name="ACK"                                value="0"/>
+        	<enumitem name="NAK"                                value="1"/>
+        	<!-- TODO: Add codes for different specific reasons -->
+        </enum>
+        
+        <enum class="ReportStatus" type="byte">
+      		<enumitem name="ACKED" 			value="A" />
+      		<enumitem name="SENT" 			value="S" />
+			<enumitem name="ACCEPTED" 		value="C" />
+			<enumitem name="PENDED" 		value="P" />
+			<enumitem name="REJECTED" 		value="R" />
+			<enumitem name="UNKNOWN" 		value="U" />
+      	</enum>
+        <enum class="TradeType" type="short">
+        	<enumitem name="ADD"				value="0"/>
+        	<enumitem name="CORRECTION"			value="1"/>
+        	<enumitem name="CANCEL_TO_CORRECT"	value="2"/>
+        	<enumitem name="CANCEL"				value="3"/>
+        </enum>
+ 
+    </constants>
+
+    <struct class="TradeSideInfo">
+        <field name="capacity"                  type="byte"                                                 shortdesc="Capacity in which the participant is trading." />
+        <field name="openClose"                 type="byte"                                                 shortdesc="Indicates the effect of this trade on the participants position in the product being traded." />
+        <field name="clearingMemberAccount"     type="byte[]"   length="Lengths.CLEARING_ACCOUNT"           shortdesc="The clearing member account registered to the exchange participant." />
+        <field name="giveUpAccount"             type="byte[]"   length="Lengths.CLEARING_ACCOUNT"           shortdesc="The clearing member account the participant would like to clear through instead of their registered clearing member account." />
+        <field name="multiAccount"              type="byte[]"   length="Lengths.MULTI_ACCOUNT"              shortdesc="The subaccount id."/>
+        <field name="houseNumber"		        type="int"											 		shortdesc="house num"/>
+        <field name="suppNum"	        		type="byte[]"	length="Lengths.SUPP_ID"					shortdesc="Supp. Number"/>
+        <field name="floorBroker"               type="byte[]"   length="Lengths.FLOOR_BROKER"               shortdesc="Account of the floorbroker responsible for executing the trade." />
+        <field name="secondaryFloorBroker"      type="byte[]"   length="Lengths.FLOOR_BROKER"               shortdesc="Account of the floorbroker who actually executed the trade in lieu of the primary floor broker." />
+        <field name="billingIndicator"          type="byte[]"	length="Lengths.BILLING_INDICATOR"          shortdesc="Billing indicator (XL only)"/>
+        <field name="offFloolExchange"			type="byte"							optional="true"			shortdesc="Exchange Code for Off-Floor/Away MarketMaker" />
+        <field name="mmSuffix"					type="byte"							optional="true"			shortdesc="Market Maker suffix" />
+    </struct>
+    
+    <struct class="TradeCommonInfo">
+        <field name="tradeType"                 type="short"                                               	shortdesc="Indicates add or chg. See enum TradeType for values"/>
+        <field name="isFlex"                    type="byte"                                                	shortdesc="Indicates whether or not trade is a Flex trade.  If not Flex, the trade is a Tams trade"/>
+        <field name="asOfDate"                  type="byte[]"   length="Lengths.DATE"                  		shortdesc="Optional field.  Value if present indicates the date on which the trade effectively occurred."/>
+        <field name="tradeTime"                 type="long"                                                	shortdesc="Time the trade was reported to have been executed."/>
+        <field name="tradeDate"                 type="byte[]"   length="Lengths.DATE"                       shortdesc="Trade Date."/>
+        <field name="isCabinet"                 type="byte"                                                	shortdesc="Indicates whether or not the trade is a cabinet."/>
+        <field name="tradePrice"                type="long"                                                	shortdesc="The trade price."/>
+ 		<field name="quantity"				    type="long"											        shortdesc="The traded quantity." />
+        <field name="symbol"                    type="byte[]"   length="Lengths.UNDERLYING_NAME"	   		shortdesc="The product symbol being traded." />
+		<field name="callPut"                   type="byte"         										shortdesc="Option type."/>
+        <field name="expirationDate"            type="byte[]"   length="Lengths.DATE"                       shortdesc="The expiration date of the product" />
+        <field name="strikePrice"               type="long"                                                 shortdesc="Option strike price." />
+        <field name="tradeSequence"             type="long"                                                 shortdesc="The trade identification from the helpdesk." />
+        <field name="correctionNum"             type="short"                                                shortdesc="Trade correction number.  Zero for adds"/>
+        <field name="reportSequence"		    type="long"											        shortdesc="The trade identification id sent to clearing org." />
+        <field name="originalTradedate"		    type="byte[]"   length="Lengths.DATE"						shortdesc="Optional field.  The trade date of originalTradeSequence." />
+        <field name="originalTradeSequence"		type="long"											        shortdesc="Optional field.  May be indicated when user enters a new TAMS trade and would typically be different from tradeSequence" />
+        <field name="refTradeSequence"		    type="long"											        shortdesc="Optional field.  The trade identification of the trade action from which this trade originated.  Set automatically as part of correcting / cancelling / reassigning a trade." />
+        <field name="refCorrectionNum"		    type="short"											        shortdesc="Optional field.  The correction number associated with refTradeSequence." />
+        <field name="submittedBy"               type="byte[]"   length="Lengths.USER_NAME"                  shortdesc="Helpdesk user who originated the request." />
+    </struct>
+    <!--
+            Unsequenced Messages
+    -->
+    <message class="UnseqMsg" >
+        <field name="timestamp"                 type="long"                                                 shortdesc="time that the associated event occurred (Nanoseconds since midnight)"/>
+        <field name="msgType"                   type="byte"                                                 shortdesc="Message Type"/>
+    </message>
+
+    <message class="UnseqTradeReportStatusMsg" parentClass="UnseqMsg" msgType="MsgTypes.TRADE_REPORT_STATUS">
+        <field name="reportSequence"            type="long"                                                       shortdesc="The trade identification id sent to clearing org." />
+        <field name="isCancel"                  type="byte"                                                       shortdesc="Indicates whether or not this message represents a cancelled trade" />
+        <field name="side"                      type="byte"                                                       shortdesc="Indicates whether update represents buy side on an accept update"/>                            
+        <field name="reportStatus"              type="byte"                                                       shortdesc="Indicates sent/acked/accepted/pended/rejected" />
+    </message>                                                                                                    
+                                                                                                                  
+    <message class="UnseqClearingTrade" parentClass="UnseqMsg" msgType="MsgTypes.EDGE_CLEARING_TRADE">            
+        <field name="common"                    type="struct"   class="TradeCommonInfo"                           shortdesc="Trade-level information." />
+        <field name="buySideInfo"               type="struct"   class="TradeSideInfo"                             shortdesc="Buy side information." />
+        <field name="sellSideInfo"              type="struct"   class="TradeSideInfo"                             shortdesc="Sell side information." />                         
+    </message>                                                                                                    
+                                                                                                                  
+    <message class="UnseqBlobMsg" parentClass="UnseqMsg" msgType="MsgTypes.BLOB" >                                
+        <field name="reportSequence"            type="long"                                                       shortdesc="The trade identification id sent to clearing org." />
+        <field name="isCancel"                  type="byte"                                                       shortdesc="Indicates whether or not this message represents a cancelled trade" />
+		<field name="blobLen"           		type="short"    												  shortdesc=" blob Len " />
+		<field name="blob"              		type="varbyte[]"    length="blobLen"  alloc="Lengths.BLOB_LEN"    shortdesc="Blob Text" />
+	</message>
+	
+	<message class="UnseqResponseMsg" parentClass="UnseqMsg" msgType="MsgTypes.PORT_RESPONSE" >
+        <field name="tradeSequence"             type="long"                                                 shortdesc="The trade identification from the helpdesk." />
+        <field name="correctionNum"             type="short"                                                shortdesc="Trade correction number.  Zero for adds"/>
+        <field name="tradeType"                 type="short"                                               	shortdesc="Indicates add or chg. See enum TradeType for values"/>
+      	<field name="code"                      type="short"        shortdesk="Response code.  0 implies an Ack"/>
+		<field name="textLen" 		            type="short" 	    shortdesc="Text Len " />
+		<field name="text" 			            type="varbyte[]" 	length="textLen" 	alloc="Lengths.MAX_REASON_LEN" 	shortdesc=" Text" />
+	</message>
+    
+    <message class="UnseqEndOfTradingMsg" parentClass="UnseqMsg" msgType="MsgTypes.END_OF_TRADING">
+	</message>
+
+    <message class="UnseqEndOfDdsMsg" parentClass="UnseqMsg" msgType="MsgTypes.END_OF_DDS">
+    </message>
+    
+    <!-- 
+            Sequenced Messages
+    -->
+    <message class="SeqMsg"  >
+        <field name="timestamp"                 type="long"         shortdesc="Engine timestamp (Nanoseconds since midnight)"/>
+        <field name="msgType"                   type="byte"         shortdesc="Message Type"/>
+    </message>
+    
+    <message class="SeqTradeReportStatusMsg" parentClass="SeqMsg" msgType="MsgTypes.TRADE_REPORT_STATUS">
+        <field name="reportSequence"            type="long"         shortdesc="The trade identification id sent to clearing org." />
+        <field name="isCancel"                  type="byte"         shortdesc="Indicates whether or not this message represents a cancelled trade" />
+        <field name="side"                      type="byte"         shortdesc="Indicates whether update represents buy side on an accept update"/>                            
+        <field name="reportStatus"              type="byte"         shortdesc="Indicates sent/acked/accepted/pended/rejected" />
+    </message>
+    
+    <message class="SeqClearingTrade" parentClass="SeqMsg" msgType="MsgTypes.EDGE_CLEARING_TRADE">
+        <field name="common"                    type="struct"   class="TradeCommonInfo"                       shortdesc="Trade-level information." />
+        <field name="buySideInfo"               type="struct"   class="TradeSideInfo"                         shortdesc="Buy side information." />
+        <field name="sellSideInfo"              type="struct"   class="TradeSideInfo"                         shortdesc="Sell side information." />                         
+    </message>
+    
+    <message class="SeqResponseMsg" parentClass="SeqMsg" msgType="MsgTypes.PORT_RESPONSE" >
+        <field name="tradeSequence"             type="long"                                                 shortdesc="The trade identification from the helpdesk." />
+        <field name="correctionNum"             type="short"                                                shortdesc="Trade correction number.  Zero for adds"/>
+        <field name="tradeType"                 type="short"                                               	shortdesc="Indicates add or chg. See enum TradeType for values"/>
+      	<field name="code"                      type="short"        shortdesk="Response code.  0 implies an Ack"/>
+		<field name="textLen" 		            type="short" 	    shortdesc="Text Len " />
+		<field name="text" 			            type="varbyte[]" 	length="textLen" 	alloc="Lengths.MAX_REASON_LEN" 	shortdesc=" Text" />
+	</message>
+    
+    <message class="SeqBlobMsg" parentClass="SeqMsg" msgType="MsgTypes.BLOB" >
+        <field name="reportSequence"            type="long"         shortdesc="The trade identification id sent to clearing org." />
+        <field name="isCancel"                  type="byte"         shortdesc="Indicates whether or not this message represents a cancelled trade" />
+		<field name="blobLen"           type="short"    													        shortdesc=" blob Len " />
+		<field name="blob"              type="varbyte[]"    length="blobLen"            alloc="Lengths.BLOB_LEN"    shortdesc="Blob Text" />
+	</message>
+    
+    <message class="SeqEndOfTradingMsg" parentClass="SeqMsg" msgType="MsgTypes.END_OF_TRADING">
+	</message>
+
+    <message class="SeqEndOfDdsMsg" parentClass="SeqMsg" msgType="MsgTypes.END_OF_DDS">
+    </message>
+	
+    <!-- DOCUMENTATION FORMAT -->
+    <documentation>
+        <title name="Coco Edge Messaging Protocol" />
+    
+        <section name="Data Types">
+        All Alpha fields are left-justified and padded on the right with spaces. 
+
+        Timestamps are encoded as numeric fields and express the time as nanoseconds since midnight, Eastern Time. All timestamps may be represented as a single Long.
+
+        $TABLE:DATATYPES
+        </section>
+        
+        <section name="Message Formats">
+        $TABLE:MESSAGES
+        </section>
+    
+        <section name="Appendicies">
+        $TABLE:APPENDIX
+        </section>
+        
+        <section name="Revision History">
+        $TABLE:CHANGES
+        </section>
+    </documentation>
+    
+    <changes>
+        <change date="08-31-2015" version="1.0">Initial Documented Version</change>
+        <change date="09-10-2015" version="1.1">Add blob messages, seq response msg and enums</change>
+    </changes>
+
+</parser>

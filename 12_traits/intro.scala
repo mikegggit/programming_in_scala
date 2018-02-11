@@ -1,0 +1,9 @@
+/*
+Similar to classes.
+
+Mechanism for code reuse.
+
+encapsulates method and field definitions
+
+
+*/

@@ -1,0 +1,9 @@
+/*
+wildcard pattern
+constant pattern
+variable pattern
+constructor pattern
+sequence pattern
+tuple pattern
+variable binding
+*/

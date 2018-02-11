@@ -1,0 +1,19 @@
+/*
+first class functions are functions that are treated 
+the same as other types in terms of...
+- passing to other functions as parameters
+- being returned as a return value
+- refer to as a literal
+
+A literal is a syntactic mechanism for declaring a function
+without needing to bind it to a variable reference.
+
+It is simply a blueprint to be "used" at compile time.  A
+function literal is transformed into a more concrete
+form at compile-time.
+
+At compile time, scala converts function literals into 
+instances of FunctionX, in essence creating function values.
+
+A function value can be returned, passed around, etc.
+*/

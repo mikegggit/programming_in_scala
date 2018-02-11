@@ -1,0 +1,3 @@
+/*
+intentionally verbose to discourage its use
+*/

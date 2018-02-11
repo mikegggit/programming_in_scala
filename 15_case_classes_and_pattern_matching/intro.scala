@@ -1,0 +1,5 @@
+/*
+case classes ana pattern matching are closely related.
+
+there are several kinds of patterns allowed
+*/

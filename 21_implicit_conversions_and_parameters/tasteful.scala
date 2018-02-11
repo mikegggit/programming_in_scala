@@ -1,0 +1,6 @@
+/*
+Appropriate use of implicits requires discretion.  Too much reliance on 
+implicits can result in code that is confusing in that it becomes
+unclear how certain conversions are being applied and where they come
+from
+*/

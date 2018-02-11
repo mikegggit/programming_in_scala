@@ -1,0 +1,7 @@
+/*
+A type of parameter that may be defined by a class.  Used
+to enforce that instances of a certain class only work
+with types of another class of the type declared by 
+the type parameter
+
+*/
