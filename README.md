@@ -1,10 +1,10 @@
 Programming in Scala 2
 ======================
-A workspace for learning scala.
+A workspace for learning / brushing up on scala concepts.
 
 Overview
 --------
-While reading the book, I used this project to test my understanding of various concepts and try out examples.  It is not intended to be clean or super organized.  However, it does contain some decent discussions of certain concepts that make it arguable worth keeping public.
+While reading the book, I used this project to test my understanding of various concepts and try out examples.  It is not intended to be clean or super organized.  However, it does contain some decent discussions of certain concepts that make it arguable worth keeping public.  The more developed examples and discussions are intended to dominate any rudimentary content within.
 
 Plans
 -----
